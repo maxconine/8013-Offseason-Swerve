@@ -61,13 +61,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-    new Button(m_operator::getTopPressed)//TODO: set button to zero gyroscope
-            // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-
-    //        new Button(() -> -operator.getRightY() >= +0.75)
-    //.whileHeld(new ClimberMoveUpCommand(climber));
+    
+    new Button(() -> m_driver.getRawButtonPressed(13))
+      .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
   }
 
   /**
