@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -22,7 +20,7 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    System.out.println("reduction" + SdsModuleConfigurations.MK4_L1.getDriveReduction());
+    System.out.println("STARTING ROBOT!");
     RobotBase.startRobot(Robot::new);
   }
 }
