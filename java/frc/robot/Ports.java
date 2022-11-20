@@ -18,11 +18,11 @@ public class Ports {
 
     public static final int FL_DRIVE = 7;
     public static final int FL_ROTATION = 10;
-    public static final int FL_CANCODER = 2; 
+    public static final int FL_CANCODER = 1; 
 
     public static final int FR_DRIVE = 9; 
     public static final int FR_ROTATION = 12;
-    public static final int FR_CANCODER = 1; 
+    public static final int FR_CANCODER = 2; 
 
     public static final int BL_DRIVE = 5;
     public static final int BL_ROTATION = 8;

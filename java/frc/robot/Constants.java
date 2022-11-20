@@ -13,6 +13,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.math.util.Units;
 import frc.robot.lib.SwerveModuleConstants;
+import frc.robot.lib.math.Conversions;
+import frc.robot.lib.math.geometry.Rotation2d;
+import frc.robot.subsystems.Limelight.LimelightConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -28,18 +31,26 @@ import frc.robot.lib.SwerveModuleConstants;
  */
 public final class Constants {
 
+    // robot loop time
+	public static final double kLooperDt = 0.02;
+
     public static final double MAX_VOLTAGE = 12.0;
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.51427;
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.51427;
 
-    public static final double stickDeadband = 0.05;
-    public static final int leftXAxis = 1;
-    public static final int leftYAxis = 0;
-    public static final int rightXAxis = 4;
+    public static final double stickDeadband = 0.02;
+    public static final int leftXAxis = 0;
+    public static final int leftYAxis = 1;
+    public static final int rightXAxis = 3;
+    public static final int rightYAxis = 4;
 
     public static final class SwerveConstants {
 
-        public static final boolean invertGyro = false;
+        public static final boolean invertGyro = false; //changed
+        public static final boolean invertXAxis = false;
+        public static final boolean invertYAxis = true;
+        public static final boolean invertRotAxis = false;
+
         //Drivetrain Constants
         public static final double driveGearRatio = 6.55;
         public static final double angleGearRatio = 10.29; // 72:14:24:12
@@ -58,8 +69,10 @@ public final class Constants {
 
         /* Swerve Profiling Values */
         public static final double maxSpeed = 5.18; // meters per second
-        public static final double maxAngularVelocity = maxSpeed / Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS 
-        / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0); //14.244 radians per second
+        public static final double maxAngularVelocity = 8;
+        
+        //maxSpeed / Math.hypot(Constants.DRIVETRAIN_TRACKWIDTH_METERS 
+        /// 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0); //14.244 radians per second
         
         /* Neutral Modes */
         public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
@@ -67,7 +80,7 @@ public final class Constants {
 
         /* Motor Inverts */
         public static final boolean driveMotorInvert = false;
-        public static final boolean angleMotorInvert = true;
+        public static final boolean angleMotorInvert = true; //TODO: I changed this
         
 
         public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(3.2); 
@@ -75,16 +88,25 @@ public final class Constants {
         public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(98.3); 
         public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(129.5); 
 
-        public static final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-            // Front left
-            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
-            // Front right
-            new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
-            // Back left
-            new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
-            // Back right
-            new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0)
-    );
+    //     public static final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+    //         // Front left
+    //         new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+    //         // Front right
+    //         new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+    //         // Back left
+    //         new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+    //         // Back right
+    //         new Translation2d(-Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0)
+    // );
+
+    public static final edu.wpi.first.math.geometry.Translation2d[] swerveModuleLocations = {
+        new edu.wpi.first.math.geometry.Translation2d(Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0, Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        new edu.wpi.first.math.geometry.Translation2d(Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0, -Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        new edu.wpi.first.math.geometry.Translation2d(-Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0, Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0),
+        new edu.wpi.first.math.geometry.Translation2d(-Constants.DRIVETRAIN_WHEELBASE_METERS / 2.0, -Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2.0)
+    };
+
+    public static final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(swerveModuleLocations);
 
 
         /*** MODULE SPECIFIC CONSTANTS ***/
@@ -92,7 +114,7 @@ public final class Constants {
         /* Front Left Module - Module 0 */
         public static final class Mod0 {
             
-            public static final double angleOffset = 3.3;
+            public static final double angleOffset = 1.494;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FL_DRIVE, Ports.FL_ROTATION, Ports.FL_CANCODER,
@@ -103,7 +125,7 @@ public final class Constants {
         /* Front Right Module - Module 1 */
         public static final class Mod1 {
             
-            public static final double angleOffset = 168.3;
+            public static final double angleOffset = 343.916;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.FR_DRIVE, Ports.FR_ROTATION, Ports.FR_CANCODER,
@@ -113,7 +135,7 @@ public final class Constants {
 
         /* Back Left Module - Module 2 */
         public static final class Mod2 {
-            public static final double angleOffset = 98.8;
+            public static final double angleOffset = 98.965;
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BL_DRIVE, Ports.BL_ROTATION, Ports.BL_CANCODER,
@@ -123,7 +145,7 @@ public final class Constants {
 
         /* Back Right Module - Module 3 */
         public static final class Mod3 {
-            public static final double angleOffset = 129.5; //129.5
+            public static final double angleOffset = 129.902; //129.5
 
             public static SwerveModuleConstants SwerveModuleConstants() {
                 return new SwerveModuleConstants(Ports.BR_DRIVE, Ports.BR_ROTATION, Ports.BR_CANCODER,
@@ -162,21 +184,21 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kSlowSpeedMetersPerSecond = 1;
-        public static final double kSlowAccelerationMetersPerSecondSquared = 2.0;
+        public static final double kSlowSpeedMetersPerSecond = 0.3;
+        public static final double kSlowAccelerationMetersPerSecondSquared = 0.5;
 
-        public static final double kMaxSpeedMetersPerSecond = 2.2; 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2.3;
+        public static final double kMaxSpeedMetersPerSecond = 0.5; 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;//change
         
-        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.8 * Math.PI;
+        public static final double kSlowMaxAngularSpeedRadiansPerSecond = 0.2 * Math.PI;//0.8
         public static final double kSlowMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kSlowMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kMaxAngularSpeedRadiansPerSecond = 1.2 * Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = .6 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
-        public static final double kPXController = 1;
+        public static final double kPXController = -1;
         public static final double kPYController = 1;
-        public static final double kPThetaController = 5;
+        public static final double kPThetaController = 1; //used to be 5
 
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
@@ -213,6 +235,52 @@ public final class Constants {
                         .setStartVelocity(0)
                         .setEndVelocity(0); 
     }
+
+    public static final class VisionConstants {
+		public static final LimelightConstants kLimelightConstants = new LimelightConstants();
+		    static {
+                kLimelightConstants.kName = "Limelight";
+                kLimelightConstants.kTableName = "limelight";
+                kLimelightConstants.kHeight = Conversions.inchesToMeters(15.0); // meters
+                kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromDegrees(34.0);
+            }
+
+		public static final double kHorizontalFOV = 59.6; // degrees
+		public static final double kVerticalFOV = 49.7; // degrees
+		public static final double kImageCaptureLatency = 11.0 / 1000.0; // seconds
+        
+        // lookahead time
+        public static final double kLookaheadTime = 0.0; // 1.10 as latest
+
+        /* Goal Tracker Constants */
+        public static final double kMaxTrackerDistance = 8.0;
+        public static final double kMaxGoalTrackAge = 10.0;
+        public static final double kMaxGoalTrackSmoothingTime = 1.5;
+        public static final double kCameraFrameRate = 90.0;
+
+        public static final double kTrackStabilityWeight = 0.0;
+        public static final double kTrackAgeWeight = 10.0;
+        public static final double kTrackSwitchingWeight = 100.0;
+
+        public static final int kDefaultPipeline = 0;
+        public static final double kGoalHeight = 2.63; // meters
+        public static final double kGoalRadius = 0.678; // meters
+	}
+    public static final class VisionAlignConstants {
+        public static final double kP = 6.37;
+        public static final double kI = 0.0;
+        public static final double kD = 0.10;
+        public static final double kTimeout = 0.25;
+        public static final double kEpsilon = 5.0;
+
+        // Constraints for the profiled angle controller
+        public static final double kMaxAngularSpeedRadiansPerSecond = 2.0 * Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = 10.0 * Math.PI;
+        
+        public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
+                new TrapezoidProfile.Constraints(kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
 
     // Timeout constants
     public static final int kLongCANTimeoutMs = 100;
